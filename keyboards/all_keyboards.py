@@ -42,3 +42,10 @@ def rules_and_missions():
                [types.InlineKeyboardButton(text='Правила сообщества', callback_data='rules')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
+
+
+def approve_or_decline(user_id):
+    buttons = [[types.InlineKeyboardButton(text='Принять', callback_data=f'accept_{user_id}')],
+               [types.InlineKeyboardButton(text='Отклонить', callback_data=f'decline_{user_id}')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
