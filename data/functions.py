@@ -1,22 +1,24 @@
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
-from data import User
+from data import User, Application
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy
 import asyncio
-from keyboards.all_keyboards import get_phone_number
+from config import APPROVED_TOPIC_ID, DECLINED_TOPIC_ID, ADMINS_CHAT_ID
+from keyboards.all_keyboards import application_approved, application_declined
 
-async def get_user(user_id, session):
+
+async def get_user(user_id: int, session: AsyncSession)->User:
     request = sqlalchemy.select(User).filter(User.telegram_id == user_id)
     user: User = list(await session.scalars(request))[0]
     return user
 
 
-async def delete_application_by_user_id(id, bot: Bot, session, approve=True):
+async def delete_application_by_user_id(user_id, bot: Bot, session, approve=True):
     topic = APPROVED_TOPIC_ID if approve else DECLINED_TOPIC_ID
-    request = sqlalchemy.select(Appeal).filter(Appeal.by_user == id, Appeal.is_review == True)
-    result: List[Appeal] = list(await session.scalars(request))
+    request = sqlalchemy.select(Application).filter(Application.by_user == user_id)
+    result: List[Application] = list(await session.scalars(request))
     for i in result:
         try:
             await bot.forward_message(chat_id=ADMINS_CHAT_ID, from_chat_id=ADMINS_CHAT_ID,
@@ -27,11 +29,11 @@ async def delete_application_by_user_id(id, bot: Bot, session, approve=True):
         try:
             await bot.delete_message(chat_id=ADMINS_CHAT_ID, message_id=i.message_id)
         except (TelegramBadRequest, TelegramForbiddenError):
-            keyboard = review_approved() if approve else review_declined()
+            keyboard = application_approved() if approve else application_declined()
             try:
                 await bot.edit_message_reply_markup(chat_id=ADMINS_CHAT_ID, message_id=i.message_id, reply_markup=keyboard)
             except (TelegramBadRequest, TelegramForbiddenError):
                 pass
-    request = sqlalchemy.delete(Appeal).filter(Appeal.by_user == id, Appeal.is_review == True)
+    request = sqlalchemy.delete(Application).filter(Application.by_user == user_id)
     await session.execute(request)
     await session.commit()

@@ -1,7 +1,4 @@
-import sqlalchemy
 from aiogram import types
-from sqlalchemy.ext.asyncio import AsyncSession
-from data import get_user, User
 
 
 
@@ -11,14 +8,9 @@ def get_phone_number():
     return keyboard
 
 
-async def menu(telegram_id, session, rejected=False):
-    user: User = await get_user(telegram_id, session)
-    buttons = [[types.KeyboardButton(text='Миссия и ценности сообщества')],
-               [types.KeyboardButton(text='Правила сообщества')]]
-    if user.is_accepted:
-        buttons.insert(0, [types.KeyboardButton(text='Бесплатные форматы')])
-        buttons.append([types.KeyboardButton(text='Членство PRO бизнес и спорт')])
-    keyboard = types.ReplyKeyboardMarkup(keyboard=buttons)
+def go_to_menu():
+    buttons = [[types.InlineKeyboardButton(text='В меню', callback_data='gotomenu')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
 
@@ -28,11 +20,14 @@ def agreement():
     return keyboard
 
 
-def check_sent_data():
+def check_sent_data_keyboard():
     buttons = [[types.InlineKeyboardButton(text='Всё верно✅', callback_data='allcorrect')],
                [types.InlineKeyboardButton(text='Изменить ФИО', callback_data='change_full_name')],
                [types.InlineKeyboardButton(text='Изменить email', callback_data='change_email')],
-               [types.InlineKeyboardButton(text='Изменить номер телефона', callback_data='change_phone')]]
+               [types.InlineKeyboardButton(text='Изменить номер телефона', callback_data='change_phone_number')],
+               [types.InlineKeyboardButton(text='Изменить название компании', callback_data='change_company_name')],
+               [types.InlineKeyboardButton(text='Изменить должность', callback_data='change_position')]]
+
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
@@ -47,5 +42,50 @@ def rules_and_missions():
 def approve_or_decline(user_id):
     buttons = [[types.InlineKeyboardButton(text='Принять', callback_data=f'accept_{user_id}')],
                [types.InlineKeyboardButton(text='Отклонить', callback_data=f'decline_{user_id}')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def admin_menu():
+    buttons = [[types.InlineKeyboardButton(text='Статистика', callback_data='stats')],
+               [types.InlineKeyboardButton(text='Рассылка', callback_data='mailing')],
+               [types.InlineKeyboardButton(text="Выгрузить пользователей", callback_data='export')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def cancel_admin():
+    buttons = [[types.InlineKeyboardButton(text="Отмена", callbxack_data='admin_cancel')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def yes_or_no():
+    buttons = [[types.InlineKeyboardButton(text='Да✅', callback_data='yes')],
+               [types.InlineKeyboardButton(text='Нет❌', callback_data='no')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def cancel():
+    buttons = [[types.InlineKeyboardButton(text="Отмена", callback_data='cancel')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def send_request():
+    buttons = [[types.InlineKeyboardButton(text="Заявка отправлена", callback_data='request')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def application_approved():
+    buttons = [[types.InlineKeyboardButton(text='Запрос одобрен✅', callback_data='_')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def application_declined():
+    buttons = [[types.InlineKeyboardButton(text='Запрос отклонён❌', callback_data='_')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
