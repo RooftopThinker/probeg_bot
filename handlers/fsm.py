@@ -1,5 +1,6 @@
 from aiogram.fsm.state import State, StatesGroup
 
+
 class RegisterUser(StatesGroup):
     fetch_number = State()
     fetch_full_name = State()
@@ -14,3 +15,7 @@ class RegisterUser(StatesGroup):
 class SendMailing(StatesGroup):
     approve = State()
     send_mailing = State()
+
+
+class ChangeMissionText(StatesGroup):
+    change_text = State()

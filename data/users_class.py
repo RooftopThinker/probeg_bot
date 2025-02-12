@@ -1,7 +1,6 @@
 import sqlalchemy
 from .database import SqlAlchemyBase
 
-
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -15,4 +14,6 @@ class User(SqlAlchemyBase):
     company_name = sqlalchemy.Column(sqlalchemy.String)
     position = sqlalchemy.Column(sqlalchemy.String)
     is_accepted = sqlalchemy.Column(sqlalchemy.Boolean)
+    is_accepted_to_paid_partnership = sqlalchemy.Column(sqlalchemy.Boolean)
     subscription_till = sqlalchemy.Column(sqlalchemy.DATE)
+    invited_by = sqlalchemy.Column(sqlalchemy.BigInteger)

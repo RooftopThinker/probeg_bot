@@ -47,9 +47,10 @@ def approve_or_decline(user_id):
 
 
 def admin_menu():
-    buttons = [[types.InlineKeyboardButton(text='Статистика', callback_data='stats')],
+    buttons = [[types.InlineKeyboardButton(text='Статистика', callback_data='stats')], #TODO
                [types.InlineKeyboardButton(text='Рассылка', callback_data='mailing')],
-               [types.InlineKeyboardButton(text="Выгрузить пользователей", callback_data='export')]]
+               [types.InlineKeyboardButton(text="Выгрузить пользователей в Excel", callback_data='export')],
+               [types.InlineKeyboardButton(text="Выгрузить пользователей в Excel", callback_data='changemissiontext')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
