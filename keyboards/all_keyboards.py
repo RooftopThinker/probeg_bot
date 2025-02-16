@@ -75,7 +75,7 @@ def cancel():
 
 
 def send_request():
-    buttons = [[types.InlineKeyboardButton(text="Заявка отправлена", callback_data='request')]]
+    buttons = [[types.InlineKeyboardButton(text="Заявка отправлена", callback_data='request_sent')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
@@ -88,5 +88,32 @@ def application_approved():
 
 def application_declined():
     buttons = [[types.InlineKeyboardButton(text='Запрос отклонён❌', callback_data='_')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def approve_or_decline_paid(user_id):
+    buttons = [[types.InlineKeyboardButton(text='Принять', callback_data=f'paidaccept_{user_id}')],
+               [types.InlineKeyboardButton(text='Отклонить', callback_data=f'paiddecline_{user_id}')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def application_accepted(manager_username):
+    buttons = [[types.InlineKeyboardButton(text=f'Обрабатывается менеджером {manager_username}', callback_data='_')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def accept_application():
+    buttons = [[types.InlineKeyboardButton(text='Взять заявку в работу', callback_data='take')]]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def payment_options(telegram_id):
+    buttons = [[types.InlineKeyboardButton(text='Оплатить картой', callback_data=f'paywithcard_{telegram_id}')],
+               [types.InlineKeyboardButton(text='Запросить счёт на оплату', callback_data=f'request_bill_{telegram_id}')],
+               [types.InlineKeyboardButton(text='Связаться с менеджером', callback_data=f'contact_{telegram_id}')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard

@@ -3,7 +3,7 @@ from aiogram.filters import Filter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from data import User
-from data.functions import get_user
+from data.database_functions import get_user
 
 
 class IsAccepted(Filter):

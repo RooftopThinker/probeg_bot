@@ -2,7 +2,6 @@ from aiogram import types, F, Router
 import aiofiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from filters.is_accepted import IsAccepted
-
 from keyboards.all_keyboards import send_request
 from keyboards.functionable_keyboards import menu_keyboard
 
@@ -34,6 +33,8 @@ async def mission_of_community(message: types.Message):
                          'тебя и про твой бизнес. Заполнить заявку можно '
                          'по ссылке [ссылка]. После заполнения нажми '
                          'кнопку Заявка отправлена".', reply_markup=send_request())
+
+
 
 
 @router.callback_query(F.data == 'gotomenu')
