@@ -1,7 +1,8 @@
 import asyncio
 import aiohttp
-from config import AMOCRM_TOKEN, SYSADMIN_ID, TerminalKey, PASSWORD
+from config import AMOCRM_TOKEN, SYSADMIN_ID, TerminalKey, PASSWORD, NotificationURL, PRICE
 import hashlib
+import datetime
 
 
 async def new_lead(full_name, phone, email, telegram_id, telegram_username, referrer_telegram_id, referrer_full_name,
@@ -132,13 +133,18 @@ def generate_token(params: dict, password: str) -> str:
 
 
 async def init_payment(telegram_id):
+    """
+    Создаёт платёж
+    """
     url = 'https://securepay.tinkoff.ru/v2/Init'
     params = {
         "TerminalKey": TerminalKey,
 
-        "Amount": 400000,
+        "Amount": PRICE,
 
-        "OrderId": telegram_id,
+        "OrderId": int(str(datetime.datetime.utcnow().timestamp()).split('.')[0] + str(telegram_id)),
+
+        "NotificationURL": NotificationURL,
 
         "PayType": 'O'}
     token = generate_token(params, PASSWORD)
@@ -147,4 +153,16 @@ async def init_payment(telegram_id):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=params, timeout=10, headers=headers) as response:
             response.raise_for_status()
-            return await response.json()
+            return await response.json(), params
+
+
+params = {
+    "TerminalKey": "1733912605907DEMO",
+    "Amount": 140000,
+    "OrderId": "13",
+    "NotificationURL": "https://rkaype-185-8-125-251.ru.tuna.am/test/"
+}
+
+token = generate_token(params, PASSWORD)
+print(token)
+

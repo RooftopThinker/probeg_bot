@@ -1,14 +1,15 @@
+import sqlalchemy
 from aiogram import types, F, Router
 import aiofiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from filters.is_accepted import IsAccepted
 from data.database_functions import get_user
-from data import Application
+from data import Application, User
 from config import ADMINS_CHAT_ID, NEW_TOPIC_ID
-from keyboards.all_keyboards import approve_or_decline, accept_application, application_accepted
-from keyboards.all_keyboards import send_request
-from keyboards.functionable_keyboards import menu_keyboard
+from keyboards.all_keyboards import approve_or_decline_paid, accept_application, application_accepted
+from keyboards.functionable_keyboards import pay_with_card
 from data.utils import get_formatted_date
+
 router = Router()
 
 
@@ -25,9 +26,10 @@ async def notify_managers(callback: types.CallbackQuery, session: AsyncSession):
             f'{user.phone_number}\n'
             f'{user.company_name}\n'
             f'{user.position}\n')
-
+    update_request = sqlalchemy.update(User).filter(User.id == user.id).values({'applied_to_paid_membership': True})
+    await session.execute(update_request)
     info = await callback.bot.send_message(chat_id=ADMINS_CHAT_ID,
-                                           reply_markup=approve_or_decline(callback.from_user.id),
+                                           reply_markup=approve_or_decline_paid(callback.from_user.id),
                                            text=text,
                                            message_thread_id=NEW_TOPIC_ID)
     application = Application(message_id=info.message_id, by_user=callback.from_user.id)
@@ -99,4 +101,8 @@ async def bill_requested(callback: types.CallbackQuery, session: AsyncSession):
     session.add(application)
     await session.commit()
 
-    
+
+@router.callback_query(F.data.startswith('paywithcard_'))
+async def bill_requested(callback: types.CallbackQuery, session: AsyncSession):
+    await callback.message.edit_text(text='Для оплаты картой нажмите на кнопку ↓',
+                                     reply_markup=await pay_with_card(callback.from_user.id, session))

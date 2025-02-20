@@ -1,6 +1,8 @@
-from data import User
+import datetime
+
+from data import User, Receipt
 from data.database_functions import get_user
-from data.http_functions import create_payment_link
+from data.http_functions import init_payment
 from aiogram import types
 
 
@@ -15,7 +17,12 @@ async def menu_keyboard(telegram_id, session):
     return keyboard
 
 
-async def pay_with_card(telegram_id):
-
-
-
+async def pay_with_card(telegram_id, session):
+    data, params = await init_payment(telegram_id)
+    buttons = [[types.InlineKeyboardButton(text='Перейти на страницу оплаты', url=data['PaymentURL'])]]
+    receipt = Receipt(telegram_id=telegram_id, order_id=params['OrderId'],
+                      date=datetime.datetime.now())
+    session.add(receipt)
+    await session.commit()
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard

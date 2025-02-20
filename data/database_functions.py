@@ -11,7 +11,10 @@ from keyboards.all_keyboards import application_approved, application_declined
 
 async def get_user(telegram_id: int, session: AsyncSession) -> User:
     request = sqlalchemy.select(User).filter(User.telegram_id == telegram_id)
-    user: User = list(await session.scalars(request))[0]
+    try:
+        user: User = list(await session.scalars(request))[0]
+    except IndexError:
+        return None
     return user
 
 
