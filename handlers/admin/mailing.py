@@ -4,7 +4,7 @@ from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import AsyncSession
 from data import User
 from filters import IsAdmin
-from keyboards.all_keyboards import cancel, yes_or_no
+from keyboards.all_keyboards import cancel_admin, yes_or_no
 from aiogram.fsm.context import FSMContext
 from ..fsm import SendMailing
 from typing import List
@@ -16,8 +16,8 @@ router.message.filter(IsAdmin())
 
 @router.callback_query(F.data == 'mailing')
 async def show_menu(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.answer(text='Пришлите сообщение, которое необходимо отправить пользователям',
-                         reply_markup=cancel())
+    await callback.message.edit_text(text='Пришлите сообщение, которое необходимо отправить пользователям',
+                         reply_markup=cancel_admin())
     await state.set_state(SendMailing.approve)
 
 

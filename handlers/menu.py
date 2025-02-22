@@ -39,9 +39,9 @@ async def mission_of_community(message: types.Message, session: AsyncSession):
                              'по ссылке [ссылка]. После заполнения нажми '
                              'кнопку Заявка отправлена".', reply_markup=send_request())
         return
-    if user.subscription_till > datetime.datetime.today():
-        await message.answer('Вы уже являетесь членом сообщества! [ссылка]')
-
+    if user.subscription_till >= datetime.date.today():
+        await message.answer('Вы являетесь членом сообщества! [ссылка]')
+        return
     async with aiofiles.open('static/paid_accepted.txt', mode='r', encoding='utf-8') as f:
         await message.answer(text=await f.read(), reply_markup=payment_options(message.from_user.id))
 

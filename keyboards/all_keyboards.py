@@ -47,16 +47,16 @@ def approve_or_decline(user_id):
 
 
 def admin_menu():
-    buttons = [[types.InlineKeyboardButton(text='Статистика', callback_data='stats')], #TODO
+    buttons = [[types.InlineKeyboardButton(text='Статистика', callback_data='stats')],
                [types.InlineKeyboardButton(text='Рассылка', callback_data='mailing')],
-               [types.InlineKeyboardButton(text="Выгрузить пользователей в Excel", callback_data='export')],
-               [types.InlineKeyboardButton(text="Выгрузить пользователей в Excel", callback_data='changemissiontext')]]
+               [types.InlineKeyboardButton(text="Выгрузить базу данных в Excel", callback_data='export')],
+               [types.InlineKeyboardButton(text="Изменить текст миссии", callback_data='changemissiontext')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
 
 def cancel_admin():
-    buttons = [[types.InlineKeyboardButton(text="Отмена", callbxack_data='admin_cancel')]]
+    buttons = [[types.InlineKeyboardButton(text="Отмена", callback_data='admin_cancel')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
@@ -105,8 +105,8 @@ def application_accepted(manager_username):
     return keyboard
 
 
-def accept_application():
-    buttons = [[types.InlineKeyboardButton(text='Взять заявку в работу', callback_data='take')]]
+def accept_application(telegram_id):
+    buttons = [[types.InlineKeyboardButton(text='Взять заявку в работу', callback_data=f'take_{telegram_id}')]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 

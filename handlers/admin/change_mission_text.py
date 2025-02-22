@@ -2,13 +2,14 @@ from aiogram import types, F, Router
 from handlers.fsm import ChangeMissionText
 from aiogram.fsm.context import FSMContext
 from keyboards.all_keyboards import cancel_admin
+from filters.is_a_member_of_admin_chat import IsAdmin
 import aiofiles
 router = Router()
 
 
-@router.callback_query(F.data == 'changemissiontext')
+@router.callback_query(F.data == 'changemissiontext', IsAdmin())
 async def start_changing_mission_text(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.edit_text('Пришлите изменённое сообщение', reply_markup=cancel_admin())
+    await callback.message.edit_text(text='Пришлите изменённое сообщение', reply_markup=cancel_admin())
     await state.set_state(ChangeMissionText.change_text)
 
 

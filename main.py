@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from asyncio import WindowsSelectorEventLoopPolicy
-# from aiogram.fsm.storage.redis import RedisStorage ##TODO UNCOMMENT
+# from asyncio import WindowsSelectorEventLoopPolicy
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram import Bot, Dispatcher
 from setup_dispatcher import setup_dispatcher
 import config
@@ -10,8 +10,8 @@ from data.database import SqlAlchemyBase, engine
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=config.BOT_TOKEN)
-asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
-dp = Dispatcher()
+# asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+dp = Dispatcher(storage=RedisStorage.from_url(config.REDIS_URL))
 
 
 async def create_metadata():

@@ -41,6 +41,8 @@ async def notify_managers(callback: types.CallbackQuery, session: AsyncSession):
 async def contact_requested(callback: types.CallbackQuery, session: AsyncSession):
     data = int(callback.data.split('_')[1])
     user = await get_user(data, session)
+    await callback.answer()
+    await callback.message.answer("Ваш запрос отправлен менеджерам, скоро они свяжутся с Вами")
     text = (f'Участник интересуется вступлением в сообщество и просит связаться с ним!\n\n'
             f'ID пользователя: {user.id}\n'
             f'{user.full_name}\n'
@@ -53,7 +55,7 @@ async def contact_requested(callback: types.CallbackQuery, session: AsyncSession
             'Пожалуйста, свяжитесь с ним в течение 30 минут')
 
     info = await callback.bot.send_message(chat_id=ADMINS_CHAT_ID,
-                                           reply_markup=accept_application(),
+                                           reply_markup=accept_application(data),
                                            text=text,
                                            message_thread_id=NEW_TOPIC_ID)
     application = Application(message_id=info.message_id, by_user=callback.from_user.id)
@@ -61,7 +63,7 @@ async def contact_requested(callback: types.CallbackQuery, session: AsyncSession
     await session.commit()
 
 
-@router.callback_query(F.data == 'take')
+@router.callback_query(F.data.startswith('take_'))
 async def application_taken(callback: types.CallbackQuery, session: AsyncSession):
     data = int(callback.data.split('_')[1])
     user = await get_user(data, session)
@@ -81,7 +83,9 @@ async def application_taken(callback: types.CallbackQuery, session: AsyncSession
 
 @router.callback_query(F.data.startswith('request_bill_'))
 async def bill_requested(callback: types.CallbackQuery, session: AsyncSession):
-    data = int(callback.data.split('_')[1])
+    await callback.answer()
+    await callback.message.answer("Ваш запрос отправлен менеджерам, скоро они свяжутся с Вами")
+    data = int(callback.data.split('_')[-1])
     user = await get_user(data, session)
     text = (f'Участник запросил счет на оплату по Б/Н\n\n'
             f'ID пользователя: {user.id}\n'
@@ -94,7 +98,7 @@ async def bill_requested(callback: types.CallbackQuery, session: AsyncSession):
             f'{user.position}\n\n')
 
     info = await callback.bot.send_message(chat_id=ADMINS_CHAT_ID,
-                                           reply_markup=accept_application(),
+                                           reply_markup=accept_application(data),
                                            text=text,
                                            message_thread_id=NEW_TOPIC_ID)
     application = Application(message_id=info.message_id, by_user=callback.from_user.id)
