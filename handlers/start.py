@@ -22,6 +22,7 @@ async def start_handler(update: Union[types.Message, types.CallbackQuery], state
     request = sqlalchemy.select(User).filter(User.telegram_id == update.from_user.id)
     result = list(await session.scalars(request))
     message = update if isinstance(update, types.Message) else update.message
+    print(message.text)
     if not result:
         await message.answer(text='Отлично! Теперь пройди короткую регистрацию. Укажи свой номер',
                              reply_markup=get_phone_number())

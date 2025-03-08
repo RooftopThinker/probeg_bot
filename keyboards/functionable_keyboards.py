@@ -13,6 +13,8 @@ async def menu_keyboard(telegram_id, session):
     if user.is_accepted:
         buttons.insert(0, [types.KeyboardButton(text='Бесплатные форматы')])
         buttons.append([types.KeyboardButton(text='Членство PRO Бизнес и Спорт')])
+    if user.role > 0:
+        buttons.insert(0, [types.KeyboardButton(text='Реферальная ссылка')])
     keyboard = types.ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
     return keyboard
 

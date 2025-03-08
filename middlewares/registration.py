@@ -21,7 +21,7 @@ class RegistrationMiddleware(BaseMiddleware):
             return await handler(message, data)
         session: AsyncSession = data.get("session")
         state: FSMContext = data.get("state")
-        if message.text == '/start' or await state.get_state() in RegisterUser:
+        if (message.text and message.text.startswith('/start')) or await state.get_state() in RegisterUser:
             return await handler(message, data)
         request = sqlalchemy.select(User).filter(User.telegram_id == message.from_user.id)
         result = list(await session.scalars(request))
